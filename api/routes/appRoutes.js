@@ -47,6 +47,43 @@ module.exports = function (app) {
     });
   });
 
+  app.get("/viewCust", function (req, res) {
+    stripe.customers.retrieve(
+      "cus_DKwkGDEIlSO5w2",
+      function (err, customer) {
+        if (err)
+          return errorHandler(err, res);
+        res.send(customer);
+      }
+    );
+  });
+
+  app.get("/createSubscription", function (req, res) {
+    stripe.subscriptions.create({
+      customer: "cus_DKwkGDEIlSO5w2",
+      plan: "plan_DKwuZLp8k6beFY",
+    }, function (err, subscription) {
+      if (err)
+        return errorHandler(err, res);
+      res.send(subscription);
+    });
+  });
+
+  app.get("/createPlan", function (req, res) {
+    stripe.plans.create({
+      amount: 5000,
+      interval: "month",
+      product: {
+        name: "Gold special"
+      },
+      currency: "usd",
+    }, function (err, plan) {
+      if (err)
+        return errorHandler(err, res);
+      res.send(plan);
+    });
+  });
+
   app.get('*', function (req, res) {
     console.log("error_get");
     res.send("no api found");
